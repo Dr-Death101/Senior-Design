@@ -1,0 +1,2 @@
+﻿#Gets the System information and displays the computer name, the name of the OS, the OS architecture, the OS version, and the OS build number
+Get-WmiObject win32_operatingsystem | Select-Object PSComputerName, Caption, OSArchitecture, Version, BuildNumber | fl
