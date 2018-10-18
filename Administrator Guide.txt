@@ -1,0 +1,2 @@
+Get-IP : Gets all IP addresses that do not have a minimum lifespan value
+Get-OperatingSystems : Gets the ComputerName, Caption (OS name), OSArchitecture, Version, and BuildNumber for the server and all VM's
