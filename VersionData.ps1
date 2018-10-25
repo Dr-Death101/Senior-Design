@@ -23,4 +23,4 @@ function Get-VersionData{
 	End{}
 }
 
-Get-VersionData
+#Get-VersionData
