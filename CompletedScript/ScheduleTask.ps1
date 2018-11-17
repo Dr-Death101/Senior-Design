@@ -1,5 +1,5 @@
 ﻿$jobname = "Server Health Check"
-$script =  "-ExecutionPolicy Bypass -file C:\Project6\CompletedScript\TestMain.ps1"
+$script =  "-ExecutionPolicy Bypass -file C:\Project6\CompletedScript\Main.ps1"
 $action = New-ScheduledTaskAction –Execute "powershell.exe" -Argument  "$script"
 $trigger = New-ScheduledTaskTrigger -Daily -At 21:25pm
 $Description="Enable run time of task at specified time"

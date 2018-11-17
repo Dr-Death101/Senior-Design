@@ -26,18 +26,19 @@
             $driveTable = [ordered]@{
                 Server = $env:COMPUTERNAME
                 Name = $drive.Name
-                Used = ($drive.TotalSize - $drive.AvailableFreeSpace) / 1GB
-                Free = $drive.AvailableFreeSpace / 1GB
-                Total = $total
+                Used = [math]::Round(($drive.TotalSize - $drive.AvailableFreeSpace) / 1GB, 2)
+                Free = [math]::Round($drive.AvailableFreeSpace / 1GB, 2)
+                Total = [math]::Round($total)
+                PercentFree = [math]::Round(($drive.AvailableFreeSpace/$drive.TotalSize)*100, 2)
             }
             $output += (New-Object psobject –Prop $driveTable)
         }
 
-        Write-Output -NoEnumerate $output
+        #Write-Output $output
 
         foreach ($vm in $VMNames) {
             
-            $output = Invoke-Command -ComputerName $vm -ArgumentList $vm -ScriptBlock {
+            $output += Invoke-Command -ComputerName $vm -ArgumentList $vm -ScriptBlock {
                 param([string]$vmName)
 
                 $drives = [System.IO.DriveInfo]::GetDrives()
@@ -52,18 +53,21 @@
                     $driveTable = [ordered]@{
                         Server = $vmName
                         Name = $drive.Name
-                        Used = ($drive.TotalSize - $drive.AvailableFreeSpace) / 1GB
-                        Free = $drive.AvailableFreeSpace / 1GB
-                        Total = $total
+                        Used = [math]::Round(($drive.TotalSize - $drive.AvailableFreeSpace) / 1GB, 2)
+                        Free = [math]::Round($drive.AvailableFreeSpace / 1GB, 2)
+                        Total = [math]::Round($total, 2)
+                        PercentFree = [math]::Round(($drive.AvailableFreeSpace/$drive.TotalSize)*100, 2)
                     }
                     $vmOutput += (New-Object psobject –Prop $driveTable)
                 }
 
-                $vmOutput
+                return $vmOutput
             }
 
-            Write-Output -NoEnumerate $output
+            #Write-Output $output
         }
+
+        return $output | select Server, Name, Used, Free, Total, PercentFree
     }
 
     End { }

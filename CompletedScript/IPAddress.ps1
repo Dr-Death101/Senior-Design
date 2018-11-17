@@ -11,7 +11,9 @@ function Get-IPs {
     Begin {}
 
     Process {
-        
+        #Make sure that Get-NetIPAddress is loaded
+        Import-Module NetTCPIP
+
         #Create the output array
         $output = @()
 
