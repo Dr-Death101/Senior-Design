@@ -1,4 +1,11 @@
-. "C:\Project6\CompletedScript\NewDataSheet.ps1"
+. "$PSScriptRoot\NewDataSheet.ps1"
 
-Get-DataSheet
-Invoke-Item "C:\Project6\CompletedScript\Data Sheet\index.html"
+$newFile = Get-DataSheet
+
+$reportsPath = "$PSScriptRoot\Data Sheet\js\reports.js"
+
+$reports = Get-Content $reportsPath
+$reports[$reports.Length - 1] = "`"$newFile`",`n];"
+$reports | Set-Content $reportsPath
+
+Invoke-Item "$PSScriptRoot\Data Sheet\index.html"

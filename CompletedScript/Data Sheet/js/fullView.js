@@ -2,14 +2,14 @@
 document.body.onload = addReportTime(reportTime, "report-time");
 
 //Generate all of the tables using the addElement function
-document.body.onload = addElement(versionData, "version-data", "Application Version", versionHighlight);
-document.body.onload = addElement(driveData, "drive-data", "Drive Space", driveHighlight);
+document.body.onload = addElement(versionData, "version-data", "Application Version", noHighlight);
+document.body.onload = addElement(driveData, "drive-data", "Drive Space", noHighlight);
 document.body.onload = addElement(ipData, "ip-data", "IP Addresses", noHighlight);
 document.body.onload = addElement(osData, "os-data", "OS Version", noHighlight);
-document.body.onload = addElement(memoryData, "memory-data", "Memory Usage", memoryHighlight);
-document.body.onload = addElement(timeData, "time-data", "Server Time", timeHighlight);
+document.body.onload = addElement(memoryData, "memory-data", "Memory Usage", noHighlight);
+document.body.onload = addElement(timeData, "time-data", "Server Time", noHighlight);
 //document.body.onload = addElement(processData, "processes-data", "Server Processes", noHighlight);
-document.body.onload = addElement(servicesData, "services-data", "Server Services", servicesHighlight);
+document.body.onload = addElement(servicesData, "services-data", "Server Services", noHighlight);
 
 //Add the report time
 function addReportTime (data, id) {
@@ -82,12 +82,12 @@ function versionHighlight (data, keys) {
 	var rows = [];
 	//Get each row of the data
 	data.forEach(function(d){
+		var tableRow = createRow(d, keys);
 		//Highlighting comparison
 		if(d["Status"] != "OK"){
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
+		rows.push(tableRow);
 	});
 	//Return the array of rows
 	return rows;
@@ -99,12 +99,12 @@ function driveHighlight (data, keys) {
 	//Get each row of the data
 	data.forEach(function(d){
 		
+		var tableRow = createRow(d, keys);
 		//Highlighting comparison
 		if(+d["Free"] < 5){
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
+		rows.push(tableRow);
 		
 	});
 	//Return the array of rows
@@ -117,12 +117,12 @@ function memoryHighlight (data, keys) {
 	//Get each row of the data
 	data.forEach(function(d){
 		
+		var tableRow = createRow(d, keys);
 		//Highlighting comparison
 		if(+d["PctFree"] < 5){
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
+		rows.push(tableRow);
 		
 	});
 	//Return the array of rows
@@ -136,22 +136,19 @@ function timeHighlight (data, keys) {
 	//Get each row of the data
 	data.forEach(function(d){
 		
+		var tableRow = createRow(d, keys);
 		//Highlighting comparison
 		if(serverData["StandardTimeZone"] != d["StandardTimeZone"]) {
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
 		else if(serverData["DaylightTimeZone"] != d["DaylightTimeZone"]) {
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
 		else if(Math.abs(serverData["UnixTime"] - d["UnixTime"]) > 120) {
-			var tableRow = createRow(d, keys);
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
+		rows.push(tableRow);
+		
 	});
 		
 	//Return the array of rows
@@ -162,14 +159,17 @@ function servicesHighlight (data, keys) {
 	//make an array for the table rows return
 	var rows = [];
 	//Get each row of the data
+	//delete keys["Ignore"];
 	data.forEach(function(d){
+		var ignore = d["Ignore"];
+		//delete d["Ignore"];
 		
+		var tableRow = createRow(d, keys);
 		//Highlighting comparison
-		if((d["StartMode"] == "Auto") && (d["State"] == "Stopped") && (d["Ignore"] == false)){
-			var tableRow = createRow(d, keys);
+		if((d["StartMode"] == "Auto") && (d["State"] == "Stopped") && !ignore){
 			tableRow.className = "red-highlight";
-			rows.push(tableRow);
 		}
+		rows.push(tableRow);
 		
 	});
 	//Return the array of rows
@@ -202,5 +202,26 @@ function createRow (data, keys) {
 		tableRow.appendChild(tableData);
 	});
 	//Return the row
+	return tableRow;
+}
+
+function createHeader (keys, ignore) {
+	var tableRow = document.createElement("tr");
+	//Add table row into the table
+	table.appendChild(tableRow);
+	
+	/*
+	ignore.forEach(){
+		
+	};*/
+	
+	//Create table header elements for each key
+	keys.forEach(function(d){
+		var tableHeader = document.createElement("th");
+		var data = document.createTextNode(d);
+		tableHeader.appendChild(data);
+		tableRow.appendChild(tableHeader);
+	});
+	
 	return tableRow;
 }
